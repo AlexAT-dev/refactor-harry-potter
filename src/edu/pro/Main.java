@@ -10,26 +10,29 @@ import java.util.stream.Collectors;
 
 public class Main {
 
+    // Method to read and clean text from a file
     public static String cleanText(String url) throws IOException {
         String content = new String(Files.readAllBytes(Paths.get(url)));
-        // Очищення. Лишаємо лише літери, пробіли та апострофи всередині слів
+        // Keep letters, spaces, and apostrophes; convert to lowercase
         content = content.replaceAll("[^A-Za-z' ]", " ").toLowerCase(Locale.ROOT);
+        // Normalize spaces and trim
         content = content.replaceAll("\\s+", " ").trim();
         return content;
     }
 
     public static void main(String[] args) throws IOException {
-        LocalDateTime start = LocalDateTime.now();
+        LocalDateTime start = LocalDateTime.now(); // Start time measurement
 
         String content = cleanText("src/edu/pro/txt/harry.txt");
 
+        // Split content into words
         List<String> words = Arrays.asList(content.split(" "));
 
+        // Get distinct words
         Set<String> distinctWords = new HashSet<>(words);
 
-        // Частоти
+        // Count frequency of each word
         Map<String, Integer> freqMap = new HashMap<>();
-
         for (String distinct : distinctWords) {
             int count = 0;
             for (String word : words) {
@@ -40,18 +43,20 @@ public class Main {
             freqMap.put(distinct, count);
         }
 
+        // Convert map to a list of "word count" strings and sort by count
         List<String> wordFreqList = freqMap.entrySet().stream()
                 .map(e -> e.getKey() + " " + e.getValue())
                 .sorted(Comparator.comparingInt(s -> Integer.parseInt(s.replaceAll("[^0-9]", ""))))
                 .toList();
 
+        // Print top 30 most frequent words (or fewer if less than 30)
         for (int i = 0; i < 30 && i < wordFreqList.size(); i++) {
             System.out.println(wordFreqList.get(wordFreqList.size() - 1 - i));
         }
 
-        LocalDateTime finish = LocalDateTime.now();
+        LocalDateTime finish = LocalDateTime.now(); // End time measurement
 
         System.out.println("------");
-        System.out.println("Час виконання (мс): " + ChronoUnit.MILLIS.between(start, finish));
+        System.out.println("Execution time (ms): " + ChronoUnit.MILLIS.between(start, finish));
     }
 }

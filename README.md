@@ -1,21 +1,20 @@
 # Harry Potter Refactored
-## Lab 3: Memory optimization
+## Lab 3: Speed Optimization
 
 ---
 
 ## Changes:
 
-- **Use of `BufferedReader` instead of reading the entire file into memory (`Files.readAllBytes`)** to reduce memory consumption.
-- **Use of `Pattern SPLIT_PATTERN` to split lines into words** instead of `String.split(" ")`.
-- **Removed the `cleanText` method**; text processing now occurs during line-by-line reading.
-- **Use of `TreeMap` instead of `HashMap`** for counting word frequencies.
-- **Word frequency counting implemented via `merge(word, 1, Integer::sum)`** instead of a manual loop over all words and `distinctWords`.
-- **Instead of creating a "word count" list and sorting, `stream().sorted(...).limit(30)` is used** to select the top 30 most frequent words.
+- **Replaced `TreeMap` with `HashMap`** for faster access and insertion.
+- **Replaced `BufferedReader` with `Files.lines()` stream** for faster reading, even though it uses slightly more memory.
+- **Kept word frequency counting via `merge(word, 1, Integer::sum)`**.
 - **`toLowerCase(Locale.ROOT)` applied directly during line reading.**
-- **Removed the separate step of normalizing spaces (`replaceAll("\\s+", " ")`).**
+- **Streamlined top-30 selection using `stream().sorted(...).limit(30)`**.
 
 ## Results:
 **Before:**
-![Before](images/before.jpg)
-**After:**
-![Before](images/memory.jpg)
+![Before](images/before.jpg)  
+**After Memory Fix:**
+![Before](images/memory.jpg)  
+**After Speed fix:**
+![After](images/speed.jpg)

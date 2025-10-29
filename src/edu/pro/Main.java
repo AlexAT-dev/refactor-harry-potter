@@ -1,6 +1,5 @@
 package edu.pro;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class Main {
     private static final Pattern SPLIT_PATTERN = Pattern.compile("[^A-Za-z']+");
@@ -19,20 +19,19 @@ public class Main {
 
         LocalDateTime start = LocalDateTime.now();
 
-        // TreeMap has less memory usage (but slower)
-        Map<String, Integer> freqMap = new TreeMap<>();
+        // HashMap faster than TreeMap
+        Map<String, Integer> freqMap = new HashMap<>();
 
-        // Buffer reader
-        try (BufferedReader br = Files.newBufferedReader(Path.of("src/edu/pro/txt/harry.txt"))) {
-            String line;
-            while ((line = br.readLine()) != null) {
+        // Stream reading faster than Buffer reader. But has larger memory usage.
+        try (Stream<String> lines = Files.lines(Path.of("src/edu/pro/txt/harry.txt"))) {
+            lines.forEach(line -> {
                 String[] words = SPLIT_PATTERN.split(line.toLowerCase(Locale.ROOT));
                 for (String word : words) {
                     if (!word.isEmpty()) {
                         freqMap.merge(word, 1, Integer::sum);
                     }
                 }
-            }
+            });
         }
 
         freqMap.entrySet().stream()

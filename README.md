@@ -12,9 +12,9 @@
 - **Streamlined top-30 selection using `stream().sorted(...).limit(30)`**.
 
 ## Results:
-**Before:**
+**Before:**<br>
 ![Before](images/before.jpg)  
-**After Memory Fix:**
+**After Memory Fix:**<br>
 ![Before](images/memory.jpg)  
-**After Speed fix:**
+**After Speed fix:**<br>
 ![After](images/speed.jpg)

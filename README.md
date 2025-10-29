@@ -1,26 +1,21 @@
 # Harry Potter Refactored
+## Lab 3: Memory optimization
 
 ---
 
 ## Changes:
 
-1. **Collections Instead of Arrays**
-   - Replaced arrays and string concatenation with `List`, `Set`, and `Map` for words and frequencies.
+- **Use of `BufferedReader` instead of reading the entire file into memory (`Files.readAllBytes`)** to reduce memory consumption.
+- **Use of `Pattern SPLIT_PATTERN` to split lines into words** instead of `String.split(" ")`.
+- **Removed the `cleanText` method**; text processing now occurs during line-by-line reading.
+- **Use of `TreeMap` instead of `HashMap`** for counting word frequencies.
+- **Word frequency counting implemented via `merge(word, 1, Integer::sum)`** instead of a manual loop over all words and `distinctWords`.
+- **Instead of creating a "word count" list and sorting, `stream().sorted(...).limit(30)` is used** to select the top 30 most frequent words.
+- **`toLowerCase(Locale.ROOT)` applied directly during line reading.**
+- **Removed the separate step of normalizing spaces (`replaceAll("\\s+", " ")`).**
 
-2. **Text Cleaning**
-   - Centralized in `cleanText()` method.
-   - Cleans text to keep letters, spaces, and now supports **apostrophes** (before `it's` cleaned into `it s`, etc).
-   - Normalizes spaces and trims text.
-
-3. **Removed Code Duplication**
-   - Main method calls `cleanText()` instead of repeating cleaning logic.
-
-4. **Stream Usage for Sorting and Mapping**
-   - Sorting and mapping is now handled via streams for cleaner and more readable code.
-
-5. **Word Counting Logic**
-   - Uses `Map<String, Integer>` to count frequencies.
-   - Fixes the issue with `distinctString.contains()`, which could produce incorrect matches (e.g., `"he"` inside `"the"`).
-
-6. **Safe Top-N Output**
-   - Prints top 30 most frequent words safely without risk of `IndexOutOfBoundsException` (added `i < wordFreqList.size()`)
+## Results:
+**Before:**
+![Before](images/before.jpg)
+**After:**
+![Before](images/memory.jpg)

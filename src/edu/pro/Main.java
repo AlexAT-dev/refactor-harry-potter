@@ -1,67 +1,49 @@
 package edu.pro;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 public class Main {
-
-    // Method to read and clean text from a file
-    public static String cleanText(String url) throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(url)));
-        // Keep letters, spaces, and apostrophes; convert to lowercase
-        content = content.replaceAll("[^A-Za-z' ]", " ").toLowerCase(Locale.ROOT);
-        // Normalize spaces and trim
-        content = content.replaceAll("\\s+", " ").trim();
-        return content;
-    }
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("[^A-Za-z']+");
 
     public static void main(String[] args) throws IOException {
         Runtime runtime = Runtime.getRuntime();
         runtime.gc();
-        long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        long memoryBefore = (runtime.totalMemory() - runtime.freeMemory());
 
-        LocalDateTime start = LocalDateTime.now(); // Start time measurement
+        LocalDateTime start = LocalDateTime.now();
 
-        String content = cleanText("src/edu/pro/txt/harry.txt");
+        // TreeMap has less memory usage (but slower)
+        Map<String, Integer> freqMap = new TreeMap<>();
 
-        // Split content into words
-        List<String> words = Arrays.asList(content.split(" "));
-
-        // Get distinct words
-        Set<String> distinctWords = new HashSet<>(words);
-
-        // Count frequency of each word
-        Map<String, Integer> freqMap = new HashMap<>();
-        for (String distinct : distinctWords) {
-            int count = 0;
-            for (String word : words) {
-                if (distinct.equals(word)) {
-                    count++;
+        // Buffer reader
+        try (BufferedReader br = Files.newBufferedReader(Path.of("src/edu/pro/txt/harry.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] words = SPLIT_PATTERN.split(line.toLowerCase(Locale.ROOT));
+                for (String word : words) {
+                    if (!word.isEmpty()) {
+                        freqMap.merge(word, 1, Integer::sum);
+                    }
                 }
             }
-            freqMap.put(distinct, count);
         }
 
-        // Convert map to a list of "word count" strings and sort by count
-        List<String> wordFreqList = freqMap.entrySet().stream()
-                .map(e -> e.getKey() + " " + e.getValue())
-                .sorted(Comparator.comparingInt(s -> Integer.parseInt(s.replaceAll("[^0-9]", ""))))
-                .toList();
+        freqMap.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(30)
+                .forEach(e -> System.out.println(e.getKey() + " " + e.getValue()));
 
-        // Print top 30 most frequent words (or fewer if less than 30)
-        for (int i = 0; i < 30 && i < wordFreqList.size(); i++) {
-            System.out.println(wordFreqList.get(wordFreqList.size() - 1 - i));
-        }
-
-        LocalDateTime finish = LocalDateTime.now(); // End time measurement
+        LocalDateTime finish = LocalDateTime.now();
 
         runtime.gc();
-        long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        long memoryAfter = (runtime.totalMemory() - runtime.freeMemory());
         long memoryUsed = memoryAfter - memoryBefore;
         double memoryUsedMb = memoryUsed / (1024.0 * 1024.0);
 

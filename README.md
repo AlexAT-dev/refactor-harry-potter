@@ -15,7 +15,7 @@
 - **Removed the separate step of normalizing spaces (`replaceAll("\\s+", " ")`).**
 
 ## Results:
-**Before:**
+**Before:**<br>
 ![Before](images/before.jpg)
-**After:**
+**After:**<br>
 ![Before](images/memory.jpg)

@@ -17,5 +17,5 @@
 ## Results:
 **Before:**<br>
 ![Before](images/before.jpg)
-**After:**<br>
+<br>**After:**<br>
 ![Before](images/memory.jpg)

@@ -21,6 +21,10 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memoryBefore = runtime.totalMemory() - runtime.freeMemory();
+
         LocalDateTime start = LocalDateTime.now(); // Start time measurement
 
         String content = cleanText("src/edu/pro/txt/harry.txt");
@@ -56,7 +60,13 @@ public class Main {
 
         LocalDateTime finish = LocalDateTime.now(); // End time measurement
 
+        runtime.gc();
+        long memoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        long memoryUsed = memoryAfter - memoryBefore;
+        double memoryUsedMb = memoryUsed / (1024.0 * 1024.0);
+
         System.out.println("------");
         System.out.println("Execution time (ms): " + ChronoUnit.MILLIS.between(start, finish));
+        System.out.println("Memory used: " + memoryUsed + " bytes (" + String.format("%.2f", memoryUsedMb) + " MB)");
     }
 }
